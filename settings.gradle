@@ -25,3 +25,9 @@ pluginManagement {
         }
     }
 }
+
+sourceControl {
+    gitRepository("https://github.com/Tiger-team-2679/TigerCode.git") {
+        producesModule("TigerCode:core")
+    }
+}
