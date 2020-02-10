@@ -37,10 +37,6 @@ deploy {
     }
 }
 
-repositories { mavenCentral() }
-
-configurations { sshAntTask }
-
 // Set this to true to enable desktop support.
 def includeDesktopSupport = false
 
@@ -67,8 +63,6 @@ dependencies {
             branch = 'master'
         }
     }
-
-    sshAntTask 'org.apache.ant:ant-jsch:1.9.2'
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
@@ -77,53 +71,4 @@ dependencies {
 jar {
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
-}
-
-def jetson_project_dir = 'vision'
-def jetson_host = 'tegra-ubuntu.local'
-def jetson_user = 'nvidia'
-def jetson_password = 'nvidia'
-def jetson_workdir = '/home/nvidia/Desktop/frc/${jetson_project_dir}'
-def jetson_output = 'JetsonDeployOutput.txt'
-
-task jetsonDeploy() {
-    ant.taskdef(
-            name: 'scp',
-            classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
-            classpath: configurations.sshAntTask.asPath)
-
-    ant.taskdef(
-            name: 'ssh',
-            classname: 'org.apache.tools.ant.taskdefs.optional.ssh.SSHExec',
-            classpath: configurations.sshAntTask.asPath)
-
-    ant.ssh(
-            host: jetson_host,
-            username: jetson_user,
-            password: jetson_password,
-            trust: true,
-            verbose: true,
-            output: jetson_output,
-            command: "rm ${jetson_workdir} -r -f && mkdir ${jetson_workdir}"
-    )
-
-    ant.scp(remoteTodir: "${jetson_user}:${jetson_password}@${jetson_host}:${jetson_workdir}",
-            trust: true,
-            verbose: true,
-            failonerror: true) {
-        fileset(dir: jetson_project_dir) {
-            include(name: '**/**')
-        }
-    }
-
-    ant.ssh(
-            host: jetson_host,
-            username: jetson_user,
-            password: jetson_password,
-            trust: true,
-            verbose: true,
-            output: jetson_output,
-            command: "cd ${jetson_workdir} && mkdir build && cd build && cmake ../ && make"
-    )
-
 }
