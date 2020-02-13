@@ -13,6 +13,9 @@ file(GLOB vision_SRC
         "src/main/cpp/**/*.hpp"
         "src/main/cpp/**/*.cpp"
         "src/main/cpp/**/*.h"
+
+        "lib/jetsonTX2GPIO/jetsonGPIO.c"
+        "lib/jetsonTX2GPIO/jetsonGPIO.h"
         )
 
 add_executable(vision ${vision_SRC})
