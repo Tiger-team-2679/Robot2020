@@ -5,16 +5,16 @@ import edu.wpi.first.wpilibj.XboxController;
 
 public class RobotMap {
 
-    public static Joystick joystick = new Joystick(0);
-    public static XboxController xbox = new XboxController(1);
+    public static final Joystick joystick = new Joystick(0);
+    public static final XboxController xbox = new XboxController(1);
 
-    public static int elevatorLeft = 0;
-    public static int elevatorRight = 1;
-    public static int climber = 2;
-    public static int colourWheel = 3;
-    public static int dtFrontLeft = 4;
-    public static int dtBackLeft = 5;
-    public static int dtFrontRight = 6;
-    public static int dtBackRight = 7;
+    public static final int elevatorLeft = 0;
+    public static final int elevatorRight = 1;
+    public static final int climber = 2;
+    public static final int colourWheel = 3;
+    public static final int dtFrontLeft = 4;
+    public static final int dtBackLeft = 5;
+    public static final int dtFrontRight = 6;
+    public static final int dtBackRight = 7;
 
 }
