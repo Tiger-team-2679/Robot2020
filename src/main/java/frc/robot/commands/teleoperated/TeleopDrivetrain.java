@@ -60,6 +60,7 @@ public class TeleopDrivetrain extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        drivetrain.set(0,0);
     }
 
     // Returns true when the command should end.
