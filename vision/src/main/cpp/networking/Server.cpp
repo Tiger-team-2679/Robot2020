@@ -2,27 +2,26 @@
 
 Server::Server(unsigned short port) {
     this->_port = port;
-    #ifdef _WIN32
-        WSADATA wsa_data;
-        WSAStartup(MAKEWORD(1, 1), &wsa_data);
-    #endif
-    this->_serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (!IS_SOCKET_VALID(this->_serverSocket)) {
-        closesocket(this->_serverSocket);
+    this->_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (this->_serverSocket < 0) {
+        closeSocket(this->_serverSocket);
         throw std::runtime_error("Networking Error: server socket creation failed");
     }
+    int n = 1;
+    if(setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &n, sizeof(n)) == -1){
+        closeSocket(this->_serverSocket);
+        throw std::runtime_error("Networking Error: changing socket settings failed");
+    }
+    start();
 }
 
 Server::~Server() {
     this->_running = false;
     closeSocket(this->_serverSocket);
     closeSocket(this->_clientSocket);
-    #ifdef _WIN32
-        WSACleanup();
-    #endif
-        if(this->_clientAcceptorThread.joinable()){
-            this->_clientAcceptorThread.detach();
-        }
+    if(this->_clientAcceptorThread.joinable()){
+        this->_clientAcceptorThread.detach();
+    }
 }
 
 void Server::start() {
@@ -41,41 +40,35 @@ void Server::acceptClients() {
     while(this->_running) {
         struct sockaddr_in cli_addr{};
         socklen_t clilen = sizeof(cli_addr);
-        listen(this->_serverSocket, 5);
+        listen(this->_serverSocket, 1);
         SOCKET temp = accept(this->_serverSocket,
                                      (struct sockaddr *) &cli_addr, &clilen);
-        if(IS_SOCKET_VALID(this->_clientSocket)){
+        if(this->_clientSocket >= 0){
             this->closeSocket(this->_clientSocket);
         }
         this->_clientSocket = temp;
-        if (!IS_SOCKET_VALID(this->_clientSocket)) {
+        if (this->_clientSocket < 0) {
             throw std::runtime_error("Networking Error: client socket acceptance failed");
         }
-        printf("client found\n");
+        std::cout << "New client connected" << std::endl;
     }
 }
 
 int Server::closeSocket(SOCKET sock) {
-    int status = 0;
-    #ifdef _WIN32
-        status = shutdown(sock, SD_BOTH);
-        if (status == 0) { status = closesocket(sock); }
-    #else
-        status = shutdown(sock, SHUT_RDWR);
-        if (status == 0) { status = close(sock); }
-    #endif
+    close(sock);
+    int status = shutdown(sock, SHUT_RDWR);
     return status;
 }
 
 void Server::sendMessage(std::string message) {
-    if(send(this->_clientSocket, message.c_str(), static_cast<int>(message.length()), 0) == SOCKET_ERROR){
+    if(send(this->_clientSocket, message.c_str(), static_cast<int>(message.length()), 0) == -1){
         throw std::runtime_error("Networking Error: sending data failed");
     }
 }
 
 Command Server::recvMessage() {
-    char buf[3];
+    char buf[2];
     recv(this->_clientSocket, buf, sizeof(buf), 0);
-    return Command {buf[0] == VALIDATION_CHAR,buf[1],buf[2]};
+    return Command {buf[0],buf[1]};
 }
 

@@ -1,10 +1,11 @@
 #pragma once
 
 #include <iostream>
+#include <stdexcept>
 #include "thread"
 #include "CameraFetcher.h"
-#include "Command.h"
-#include "Processor.h"
+#include "./utils/Command.h"
+#include "../networking/Server.h"
 
 #define SERVER_PORT 2679
 
@@ -12,14 +13,20 @@ class ProcessingThread {
 public:
     explicit ProcessingThread();
     ~ProcessingThread();
-    void start();
+    void process();
 private:
-    void processingHandler();
-    void updateCommand(Command & command);
-    void startThread();
-    void stopThread();
-    bool _running;
+    std::string getGstreamerPipe();
+    void updateCommand();
+
+    // processing methods
+    int processCargo();
+
     Command _command;
-    std::thread _thread;
-    Processor _processor;
+    Server _server{SERVER_PORT};
+    std::thread _serverThread;
+    bool _serverEndSignal = false;
+
+    cv::VideoCapture * _cap;
+    CameraFetcher * _cameraFetcher;
+    Frame * _frame;
 };

@@ -1,0 +1,17 @@
+[Unit]
+Description=image processing server service
+BindsTo=dev-video1.device
+After=network-online.target dev-video1.device
+Wants=network-online.target
+StartLimitBurst=10000
+StartLimitInterval=1
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=3
+ExecStart=/home/vision/processing/build/vision
+WorkingDirectory=/home/vision/processing/build
+
+[Install]
+WantedBy=multi-user.target

@@ -1,65 +1,61 @@
 #include "ProcessingThread.h"
 
 ProcessingThread::ProcessingThread() {
-    this->_running = false;
+    this->_cap = new cv::VideoCapture(getGstreamerPipe());
+    if(!_cap->isOpened()) {
+        throw std::runtime_error("Gstreamer Error: Can't create gstreamer reader");
+        return;
+    }
+    this->_cameraFetcher = new CameraFetcher(this->_cap);
+    this->_cameraFetcher->start();
+    this->_serverThread = std::thread(&ProcessingThread::updateCommand, this);
 }
 
 ProcessingThread::~ProcessingThread() {
-    this->stopThread();
+    this->_serverEndSignal = true;
+    if(this->_serverThread.joinable()){
+        this->_serverThread.join();
+    }
+    this->_cameraFetcher->stop();
+    this->_cap->release();
+    delete this->_cameraFetcher;
 }
 
-void ProcessingThread::start(){
-    Server server(SERVER_PORT);
-    server.start();
-    while (true) {
-        Command command = server.recvMessage();
-        if(command.is_valid) {
-            this->updateCommand(command);
-        }
+std::string ProcessingThread::getGstreamerPipe() {
+    return "v4l2src device=/dev/video1 ! video/x-raw, width=(int)640, height=(int)480, format=(string)BGR ! videoconvert ! appsink";
+}
+
+void ProcessingThread::updateCommand() {
+    while(!this->_serverEndSignal){
+        this->_command = this->_server.recvMessage();
     }
 }
 
-void ProcessingThread::startThread() {
-    this->_running = true;
-    this->_thread = std::thread(&ProcessingThread::processingHandler, this);
-}
-
-void ProcessingThread::stopThread() {
-    this->_running = false;
-    if(this->_thread.joinable()){
-        this->_thread.join();
-    }
-}
-
-void ProcessingThread::processingHandler() {
-    while(this->_running){
+void ProcessingThread::process() {
+    while(true){
         if(_command.method == INFINITE_RETURN_METHOD){
             if(_command.target == CARGO_TARGET_CODE){
-                this->_processor.processCargo();
+                this->processCargo();
             }
             // TODO send data
         }
         else if(_command.method == SINGLE_RETURN_METHOD){
             if(_command.target == CARGO_TARGET_CODE){
-                while(!this->_processor.processCargo()){};
+                while(!this->processCargo()){};
             }
+            this->_command = Command{0,0};
+            this->_server.sendMessage("cool and good");
             // TODO send data
-            this->_running= false;
-            break;
-        } else{
-            std::cerr << "Processing Error: invalid process method, doing nothing." << std::endl;
-            this->_running = false;
-            break;
         }
     }
 }
 
-void ProcessingThread::updateCommand(Command & command) {
-    if(command.is_valid) {
-        this->_command = command;
-        if (!this->_running) {
-            this->stopThread();
-            this->startThread();
-        }
+inline int ProcessingThread::processCargo() {
+    this->_cameraFetcher->refresh_frame(&this->_frame);
+    if(this->_frame->mat.empty() || this->_frame->lastFetcher == std::this_thread::get_id()){
+        return 0;
     }
+    // TODO implement processing code here
+    return true;
 }
+

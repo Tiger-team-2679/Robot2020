@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 project(vision)
 
+find_package(Threads)
 find_package( OpenCV REQUIRED )
+set(CMAKE_CXX_STANDARD 11)
 set(WITH_CUDA ON)
 
 include_directories( ${OpenCV_INCLUDE_DIRS} )
@@ -20,4 +22,4 @@ file(GLOB vision_SRC
 
 add_executable(vision ${vision_SRC})
 
-target_link_libraries( vision opencv_core opencv_highgui opencv_videoio ws2_32)
+target_link_libraries(vision opencv_core opencv_highgui opencv_videoio ${CMAKE_THREAD_LIBS_INIT})

@@ -1,19 +1,17 @@
 #pragma once
-#include <stdexcept>
-#include <thread>
-#include <stdexcept>
-#include "../processing/Command.h"
 
-#ifdef _WIN32
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#pragma comment(lib, "ws2_32")
-#define IS_SOCKET_VALID(SOCK) (SOCK != INVALID_SOCKET)
-#else
+#include <stdexcept>
+#include <iostream>
+#include <thread>
+#include "../processing/utils/Command.h"
+
 #include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <netinet/ip.h>
+#include <unistd.h>
+
 #define SOCKET int
-#define IS_SOCKET_VALID(SOCK) SOCK >= 0
-#endif
 
 /**
  * an incoming message will look like this:
@@ -23,7 +21,7 @@
 
 /**
  * an outgoing message will look like this:
- *  "<VALIDATION_CODE>;<TARGET CODE>;<DISTANCE>;<ANGLE>"
+ *  ";<TARGET CODE>;<DISTANCE>;<ANGLE>;<ETC>;..."
  *  target code should be char, all other are numbers
  */
 
@@ -35,7 +33,6 @@ class Server {
 public:
     Server(unsigned short port);
     ~Server();
-    void start();
     void sendMessage(std::string message);
     Command recvMessage();
 private:
@@ -44,6 +41,8 @@ private:
     SOCKET _serverSocket;
     SOCKET _clientSocket;
     std::thread _clientAcceptorThread;
+
+    void start();
     void acceptClients();
     int closeSocket(SOCKET sock);
 };
