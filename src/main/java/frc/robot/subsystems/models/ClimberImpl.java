@@ -2,20 +2,24 @@ package frc.robot.subsystems.models;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 import frc.robot.utils.drivers.LazyTalonSRX;
 
-public class ClimberImpl implements Climber {
+public class ClimberImpl extends SubsystemBase implements Climber {
 
-    private TalonSRX motor;
+    private TalonSRX leftMotor;
+    private TalonSRX rightMotor;
 
     public ClimberImpl() {
-        motor = new LazyTalonSRX(RobotMap.climber);
+        leftMotor = new LazyTalonSRX(RobotMap.climberLeft);
+        rightMotor = new LazyTalonSRX(RobotMap.climberRight);
     }
 
     @Override
     public void set(double power) {
-        motor.set(ControlMode.PercentOutput, power);
+        rightMotor.set(ControlMode.PercentOutput, power);
+        leftMotor.set(ControlMode.PercentOutput, power);
     }
 
 }

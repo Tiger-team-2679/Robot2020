@@ -6,10 +6,11 @@ import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 import frc.robot.utils.drivers.LazyTalonSRX;
 
-public class ColourWheelImpl implements ColourWheel {
+public class ColourWheelImpl extends SubsystemBase implements ColourWheel {
 
     private LazyTalonSRX motor;
     private ColorSensorV3 colourSensor;

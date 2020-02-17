@@ -2,10 +2,11 @@ package frc.robot.subsystems.models;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 import frc.robot.utils.drivers.LazyTalonSRX;
 
-public class ElevatorImpl implements Elevator {
+public class ElevatorImpl extends SubsystemBase implements Elevator {
 
     private TalonSRX left;
     private TalonSRX right;
