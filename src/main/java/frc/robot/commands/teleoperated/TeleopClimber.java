@@ -21,13 +21,8 @@ public class TeleopClimber extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final Climber climber;
 
-    /**
-     * Creates a new ExampleCommand.
-     *
-     * @param climber The subsystem used by this command.
-     */
-    public TeleopClimber(Climber climber) {
-        this.climber = climber;
+    public TeleopClimber() {
+        this.climber = RobotMap.climber;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(climber);
     }

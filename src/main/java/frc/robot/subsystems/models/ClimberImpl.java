@@ -12,8 +12,8 @@ public class ClimberImpl extends SubsystemBase implements Climber {
     private TalonSRX rightMotor;
 
     public ClimberImpl() {
-        leftMotor = new LazyTalonSRX(RobotMap.climberLeft);
-        rightMotor = new LazyTalonSRX(RobotMap.climberRight);
+        leftMotor = new LazyTalonSRX(RobotMap.climberLeftId);
+        rightMotor = new LazyTalonSRX(RobotMap.climberRightId);
     }
 
     @Override

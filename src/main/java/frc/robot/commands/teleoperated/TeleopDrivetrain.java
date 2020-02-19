@@ -2,6 +2,7 @@ package frc.robot.commands.teleoperated;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.RobotMap;
 import frc.robot.subsystems.models.Climber;
 import frc.robot.subsystems.models.Drivetrain;
@@ -10,13 +11,10 @@ public class TeleopDrivetrain extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final Drivetrain drivetrain;
 
-    /**
-     * Creates a new ExampleCommand.
-     *
-     * @param drivetrain The subsystem used by this command.
-     */
-    public TeleopDrivetrain(Drivetrain drivetrain) {
-        this.drivetrain = drivetrain;
+    protected double m_deadband = 0.02;
+
+    public TeleopDrivetrain() {
+        this.drivetrain = RobotMap.drivetrain;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(drivetrain);
     }
@@ -29,32 +27,40 @@ public class TeleopDrivetrain extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double stickY = RobotMap.joystick.getY();
-        double stickX = RobotMap.joystick.getX();
+        double xSpeed = RobotMap.joystick.getY();
+        double zRotation = -RobotMap.joystick.getX();
 
-        double leftSpeed = 0;
-        double rightSpeed = 0;
+        xSpeed = MathUtil.clamp(xSpeed, -1.0, 1.0);
+        xSpeed = applyDeadband(xSpeed, m_deadband);
+        zRotation = MathUtil.clamp(zRotation, -1.0, 1.0);
+        zRotation = applyDeadband(zRotation, m_deadband);
 
-        leftSpeed += (stickX);
-        rightSpeed -= (stickX);
+        double leftMotorOutput;
+        double rightMotorOutput;
 
-        leftSpeed += (stickY);
-        rightSpeed += (stickY);
+        double maxInput = Math.copySign(Math.max(Math.abs(xSpeed), Math.abs(zRotation)), xSpeed);
 
-        if (leftSpeed < 0) {
-            leftSpeed *= -leftSpeed;
+        if (xSpeed >= 0.0) {
+            // First quadrant, else second quadrant
+            if (zRotation >= 0.0) {
+                leftMotorOutput = maxInput;
+                rightMotorOutput = xSpeed - zRotation;
+            } else {
+                leftMotorOutput = xSpeed + zRotation;
+                rightMotorOutput = maxInput;
+            }
+        } else {
+            // Third quadrant, else fourth quadrant
+            if (zRotation >= 0.0) {
+                leftMotorOutput = xSpeed + zRotation;
+                rightMotorOutput = maxInput;
+            } else {
+                leftMotorOutput = maxInput;
+                rightMotorOutput = xSpeed - zRotation;
+            }
         }
-        else {
-            leftSpeed *= leftSpeed;
-        }
-        if (rightSpeed < 0) {
-            rightSpeed *= -rightSpeed;
-        }
-        else {
-            rightSpeed *= rightSpeed;
-        }
 
-        drivetrain.set(leftSpeed, rightSpeed);
+        drivetrain.set(MathUtil.clamp(leftMotorOutput, -1.0, 1.0), MathUtil.clamp(rightMotorOutput, -1.0, 1.0));
     }
 
     // Called once the command ends or is interrupted.
@@ -67,5 +73,24 @@ public class TeleopDrivetrain extends CommandBase {
     @Override
     public boolean isFinished() {
         return false;
+    }
+
+    /**
+     * Returns 0.0 if the given value is within the specified range around zero. The remaining range
+     * between the deadband and 1.0 is scaled from 0.0 to 1.0.
+     *
+     * @param value    value to clip
+     * @param deadband range around zero
+     */
+    protected double applyDeadband(double value, double deadband) {
+        if (Math.abs(value) > deadband) {
+            if (value > 0.0) {
+                return (value - deadband) / (1.0 - deadband);
+            } else {
+                return (value + deadband) / (1.0 - deadband);
+            }
+        } else {
+            return 0.0;
+        }
     }
 }

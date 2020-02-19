@@ -9,13 +9,8 @@ public class TeleopElevator extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final Elevator elevator;
 
-    /**
-     * Creates a new ExampleCommand.
-     *
-     * @param elevator The subsystem used by this command.
-     */
-    public TeleopElevator(Elevator elevator) {
-        this.elevator = elevator;
+    public TeleopElevator() {
+        this.elevator = RobotMap.elevator;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(elevator);
     }

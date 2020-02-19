@@ -13,8 +13,8 @@ public class ElevatorImpl extends SubsystemBase implements Elevator {
     private final double ticksPerMeter = 0;
 
     public ElevatorImpl() {
-        left = new LazyTalonSRX(RobotMap.elevatorLeft);
-        right = new LazyTalonSRX(RobotMap.elevatorRight);
+        left = new LazyTalonSRX(RobotMap.elevatorLeftId);
+        right = new LazyTalonSRX(RobotMap.elevatorRightId);
     }
 
     @Override

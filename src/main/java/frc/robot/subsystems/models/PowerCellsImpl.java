@@ -2,7 +2,6 @@ package frc.robot.subsystems.models;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.utils.drivers.LazyTalonSRX;
 
@@ -11,8 +10,8 @@ public class PowerCellsImpl extends SubsystemBase implements PowerCells {
     private LazyTalonSRX inMotor;
 
     public PowerCellsImpl() {
-        outMotor = new LazyTalonSRX(RobotMap.pcOut);
-        inMotor = new LazyTalonSRX(RobotMap.pcIn);
+        outMotor = new LazyTalonSRX(RobotMap.pcOutId);
+        inMotor = new LazyTalonSRX(RobotMap.pcInId);
     }
 
     @Override
@@ -22,6 +21,6 @@ public class PowerCellsImpl extends SubsystemBase implements PowerCells {
 
     @Override
     public void setOut(double value) {
-        inMotor.set(ControlMode.PercentOutput, value);
+        outMotor.set(ControlMode.PercentOutput, value);
     }
 }

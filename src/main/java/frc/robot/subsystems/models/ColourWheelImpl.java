@@ -24,7 +24,7 @@ public class ColourWheelImpl extends SubsystemBase implements ColourWheel {
 
 
     public ColourWheelImpl() {
-        motor = new LazyTalonSRX(RobotMap.colourWheel);
+        motor = new LazyTalonSRX(RobotMap.colourWheelId);
         colourSensor = new ColorSensorV3(I2C.Port.kOnboard);
         colourMatcher.addColorMatch(kBlueTarget);
         colourMatcher.addColorMatch(kGreenTarget);

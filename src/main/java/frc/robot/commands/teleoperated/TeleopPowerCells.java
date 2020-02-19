@@ -7,10 +7,11 @@ import frc.robot.subsystems.models.Elevator;
 import frc.robot.subsystems.models.PowerCells;
 
 public class TeleopPowerCells extends CommandBase {
+
     private final PowerCells powerCells;
 
-    public TeleopPowerCells(PowerCells powerCells) {
-        this.powerCells = powerCells;
+    public TeleopPowerCells() {
+        this.powerCells = RobotMap.powerCells;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(powerCells);
     }
@@ -25,8 +26,8 @@ public class TeleopPowerCells extends CommandBase {
     public void execute() {
         boolean AButton = RobotMap.xbox.getAButton();
         boolean BButton = RobotMap.xbox.getBButton();
-        powerCells.setCollector(AButton ? 0.8 : 0.0);
-        powerCells.setOut(BButton ? 0.8 : 0.0);
+        powerCells.setCollector(AButton ? - 0.5 : 0.0);
+        powerCells.setOut(BButton ? 1.0 : 0.0);
     }
 
     // Called once the command ends or is interrupted.
