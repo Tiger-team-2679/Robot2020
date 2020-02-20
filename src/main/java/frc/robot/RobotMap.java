@@ -28,9 +28,8 @@ public class RobotMap {
     public static final int pcInId = 7;
     public static final int pcOutId = 2;
 
-    public static final int dtEncoderRight1 = 9;
-    public static final int dtEncoderRight2 = 8;
-    public static final int dtEncoderLeft1 = 7;
-    public static final int dtEncoderLeft2 = 6;
-
+    public static final int ASignalRightEncoder = 9;
+    public static final int BSignalRightEncoder = 8;
+    public static final int ASignalLeftEncoder = 7;
+    public static final int BSignalLeftEncoder = 6;
 }

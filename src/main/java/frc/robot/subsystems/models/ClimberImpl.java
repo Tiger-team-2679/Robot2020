@@ -18,8 +18,8 @@ public class ClimberImpl extends SubsystemBase implements Climber {
 
     @Override
     public void set(double power) {
-        rightMotor.set(ControlMode.PercentOutput, power);
-        leftMotor.set(ControlMode.PercentOutput, power);
+        rightMotor.set(ControlMode.PercentOutput, - power);
+        leftMotor.set(ControlMode.PercentOutput, - power);
     }
 
 }
