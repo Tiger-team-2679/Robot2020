@@ -9,10 +9,10 @@
 
 #define SERVER_PORT 2679
 
-class ProcessingThread {
+class Processor {
 public:
-    explicit ProcessingThread();
-    ~ProcessingThread();
+    explicit Processor();
+    ~Processor();
     void process();
 private:
     std::string getGstreamerPipe();

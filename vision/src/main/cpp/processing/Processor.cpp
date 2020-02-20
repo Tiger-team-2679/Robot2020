@@ -1,6 +1,6 @@
-#include "ProcessingThread.h"
+#include "Processor.h"
 
-ProcessingThread::ProcessingThread() {
+Processor::Processor() {
     this->_cap = new cv::VideoCapture(getGstreamerPipe());
     if(!_cap->isOpened()) {
         throw std::runtime_error("Gstreamer Error: Can't create gstreamer reader");
@@ -8,10 +8,10 @@ ProcessingThread::ProcessingThread() {
     }
     this->_cameraFetcher = new CameraFetcher(this->_cap);
     this->_cameraFetcher->start();
-    this->_serverThread = std::thread(&ProcessingThread::updateCommand, this);
+    this->_serverThread = std::thread(&Processor::updateCommand, this);
 }
 
-ProcessingThread::~ProcessingThread() {
+Processor::~Processor() {
     this->_serverEndSignal = true;
     if(this->_serverThread.joinable()){
         this->_serverThread.join();
@@ -21,17 +21,17 @@ ProcessingThread::~ProcessingThread() {
     delete this->_cameraFetcher;
 }
 
-std::string ProcessingThread::getGstreamerPipe() {
+std::string Processor::getGstreamerPipe() {
     return "v4l2src device=/dev/video1 ! video/x-raw, width=(int)640, height=(int)480, format=(string)BGR ! videoconvert ! appsink";
 }
 
-void ProcessingThread::updateCommand() {
+void Processor::updateCommand() {
     while(!this->_serverEndSignal){
         this->_command = this->_server.recvMessage();
     }
 }
 
-void ProcessingThread::process() {
+void Processor::process() {
     while(true){
         if(_command.method == INFINITE_RETURN_METHOD){
             if(_command.target == CARGO_TARGET_CODE){
@@ -50,7 +50,7 @@ void ProcessingThread::process() {
     }
 }
 
-inline int ProcessingThread::processCargo() {
+inline int Processor::processCargo() {
     this->_cameraFetcher->refresh_frame(&this->_frame);
     if(this->_frame->mat.empty() || this->_frame->lastFetcher == std::this_thread::get_id()){
         return 0;
