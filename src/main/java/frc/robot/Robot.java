@@ -8,13 +8,22 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.automonus.FollowSpline;
+import frc.robot.commands.automonus.FollowSplineV2;
 import frc.robot.commands.teleoperated.*;
 import frc.robot.subsystems.models.ClimberImpl;
 import frc.robot.subsystems.models.DrivetrainImpl;
 import frc.robot.subsystems.models.ElevatorImpl;
 import frc.robot.subsystems.models.PowerCellsImpl;
+import team2679.core.spline.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -70,6 +79,17 @@ public class Robot extends TimedRobot {
 //    if (m_autonomousCommand != null) {
 //      m_autonomousCommand.schedule();
 //    }
+
+    List<Point> points = new LinkedList<>();
+    points.add(new Point(0, 0));
+    points.add(new Point(0, 1));
+    points.add(new Point(0, 2));
+    points.add(new Point(0.5, 3));
+    points.add(new Point(0.5, 4));
+    points.add(new Point(0, 5));
+    ExtendedSpline spline = new ExtendedSplineAdapter(new BSpline(points));
+    Command auto = new FollowSplineV2(RobotMap.drivetrain, spline);
+    CommandScheduler.getInstance().schedule(auto);
   }
 
   /**
@@ -89,8 +109,9 @@ public class Robot extends TimedRobot {
 //      m_autonomousCommand.cancel();
 //    }
 
-    Command teleop = new Teleop();
-    CommandScheduler.getInstance().schedule(teleop);
+
+    Command tele = new Teleop();
+    CommandScheduler.getInstance().schedule(tele);
   }
 
   /**
