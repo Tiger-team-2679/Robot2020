@@ -83,10 +83,6 @@ public class Robot extends TimedRobot {
     List<Point> points = new LinkedList<>();
     points.add(new Point(0, 0));
     points.add(new Point(0, 1));
-    points.add(new Point(0, 2));
-    points.add(new Point(0.5, 3));
-    points.add(new Point(0.5, 4));
-    points.add(new Point(0, 5));
     ExtendedSpline spline = new ExtendedSplineAdapter(new BSpline(points));
     Command auto = new FollowSplineV2(RobotMap.drivetrain, spline);
     CommandScheduler.getInstance().schedule(auto);
