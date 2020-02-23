@@ -6,13 +6,11 @@ VideoStreamer::VideoStreamer(std::string target, int port) {
     " width=(int)640," \
     " height=(int)480," \
     " framerate=(fraction)30/1" \
-    " ! videoconvert" \
-    //" ! queue ! omxh264enc control-rate=2 bitrate=2000"
-    " ! x264enc bitrate=2000 speed-preset=ultrafast tune=zerolatency sliced-threads=true byte-stream=true threads=1 key-int-max=1000 intra-refresh=true" \
-    " ! video/x-h264, stream-format=(string)byte-stream, width=(int)160, height=(int)120"
-    " ! h264parse ! rtph264pay pt=96  mtu=1400 ! udpsink" \
-    " host=" + target + \
-    " port=" + std::to_string(port) + " ";
+    " ! videoconvert ! video/x-raw,format=I420"
+    " ! x264enc tune=zerolatency bitrate=250 threads=1" \
+    " ! rtph264pay config-interval=1 name=pay0 pt=96" \
+    " ! udpsink host=" + target + " port=" + std::to_string(port) + " ";
+    std::cout << pipe_args << std::endl;
     this->_pipeline_out.open(pipe_args, 0, 30, cv::Size(640, 480), true);
     std::cout << std::endl << this->_pipeline_out.isOpened() << std::endl;
 

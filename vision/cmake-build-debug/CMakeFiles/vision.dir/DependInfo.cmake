@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/tmp/tmp.tTdhs4Uvpv/src/main/cpp/processing/CameraFetcher.cpp" "/tmp/tmp.tTdhs4Uvpv/cmake-build-debug/CMakeFiles/vision.dir/src/main/cpp/processing/CameraFetcher.cpp.o"
   "/tmp/tmp.tTdhs4Uvpv/src/main/cpp/processing/Processor.cpp" "/tmp/tmp.tTdhs4Uvpv/cmake-build-debug/CMakeFiles/vision.dir/src/main/cpp/processing/Processor.cpp.o"
   "/tmp/tmp.tTdhs4Uvpv/src/main/cpp/processing/VideoStreamer.cpp" "/tmp/tmp.tTdhs4Uvpv/cmake-build-debug/CMakeFiles/vision.dir/src/main/cpp/processing/VideoStreamer.cpp.o"
+  "/tmp/tmp.tTdhs4Uvpv/src/main/cpp/processing/utils/ObjectDetection.cpp" "/tmp/tmp.tTdhs4Uvpv/cmake-build-debug/CMakeFiles/vision.dir/src/main/cpp/processing/utils/ObjectDetection.cpp.o"
   "/tmp/tmp.tTdhs4Uvpv/src/main/cpp/processing/utils/QuickMaths.cpp" "/tmp/tmp.tTdhs4Uvpv/cmake-build-debug/CMakeFiles/vision.dir/src/main/cpp/processing/utils/QuickMaths.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

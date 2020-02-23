@@ -11,7 +11,7 @@
 #define SERVER_PORT 2679
 
 class Processor {
-public:
+public: 
     explicit Processor();
     ~Processor();
     void process();

@@ -5,6 +5,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/vision.dir/src/main/cpp/processing/Processor.cpp.o"
   "CMakeFiles/vision.dir/src/main/cpp/processing/VideoStreamer.cpp.o"
   "CMakeFiles/vision.dir/src/main/cpp/processing/utils/QuickMaths.cpp.o"
+  "CMakeFiles/vision.dir/src/main/cpp/processing/utils/ObjectDetection.cpp.o"
   "vision.pdb"
   "vision"
 )

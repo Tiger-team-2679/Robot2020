@@ -34,7 +34,6 @@ void Processor::updateCommand() {
 void Processor::process() {
     while(true){
         this->_cameraFetcher->refresh_frame(&this->_inputFrame);
-        this->stream.refresh_frame(&this->_outputFrame);
         if(!(this->_inputFrame->mat.empty() || this->_inputFrame->lastFetcher == std::this_thread::get_id())) {
             if (_command.method == INFINITE_RETURN_METHOD) {
                 if (_command.target == CARGO_TARGET_CODE) {

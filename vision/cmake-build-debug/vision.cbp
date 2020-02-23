@@ -113,6 +113,12 @@
       <Unit filename="/tmp/tmp.tTdhs4Uvpv/src/main/cpp/processing/VideoStreamer.h">
          <Option target="vision"/>
       </Unit>
+      <Unit filename="/tmp/tmp.tTdhs4Uvpv/src/main/cpp/processing/utils/ObjectDetection.cpp">
+         <Option target="vision"/>
+      </Unit>
+      <Unit filename="/tmp/tmp.tTdhs4Uvpv/src/main/cpp/processing/utils/ObjectDetection.h">
+         <Option target="vision"/>
+      </Unit>
       <Unit filename="/tmp/tmp.tTdhs4Uvpv/src/main/cpp/processing/utils/QuickMaths.cpp">
          <Option target="vision"/>
       </Unit>

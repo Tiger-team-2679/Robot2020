@@ -258,6 +258,33 @@ src/main/cpp/processing/VideoStreamer.cpp.s:
 	$(MAKE) -f CMakeFiles/vision.dir/build.make CMakeFiles/vision.dir/src/main/cpp/processing/VideoStreamer.cpp.s
 .PHONY : src/main/cpp/processing/VideoStreamer.cpp.s
 
+src/main/cpp/processing/utils/ObjectDetection.o: src/main/cpp/processing/utils/ObjectDetection.cpp.o
+
+.PHONY : src/main/cpp/processing/utils/ObjectDetection.o
+
+# target to build an object file
+src/main/cpp/processing/utils/ObjectDetection.cpp.o:
+	$(MAKE) -f CMakeFiles/vision.dir/build.make CMakeFiles/vision.dir/src/main/cpp/processing/utils/ObjectDetection.cpp.o
+.PHONY : src/main/cpp/processing/utils/ObjectDetection.cpp.o
+
+src/main/cpp/processing/utils/ObjectDetection.i: src/main/cpp/processing/utils/ObjectDetection.cpp.i
+
+.PHONY : src/main/cpp/processing/utils/ObjectDetection.i
+
+# target to preprocess a source file
+src/main/cpp/processing/utils/ObjectDetection.cpp.i:
+	$(MAKE) -f CMakeFiles/vision.dir/build.make CMakeFiles/vision.dir/src/main/cpp/processing/utils/ObjectDetection.cpp.i
+.PHONY : src/main/cpp/processing/utils/ObjectDetection.cpp.i
+
+src/main/cpp/processing/utils/ObjectDetection.s: src/main/cpp/processing/utils/ObjectDetection.cpp.s
+
+.PHONY : src/main/cpp/processing/utils/ObjectDetection.s
+
+# target to generate assembly for a file
+src/main/cpp/processing/utils/ObjectDetection.cpp.s:
+	$(MAKE) -f CMakeFiles/vision.dir/build.make CMakeFiles/vision.dir/src/main/cpp/processing/utils/ObjectDetection.cpp.s
+.PHONY : src/main/cpp/processing/utils/ObjectDetection.cpp.s
+
 src/main/cpp/processing/utils/QuickMaths.o: src/main/cpp/processing/utils/QuickMaths.cpp.o
 
 .PHONY : src/main/cpp/processing/utils/QuickMaths.o
@@ -309,6 +336,9 @@ help:
 	@echo "... src/main/cpp/processing/VideoStreamer.o"
 	@echo "... src/main/cpp/processing/VideoStreamer.i"
 	@echo "... src/main/cpp/processing/VideoStreamer.s"
+	@echo "... src/main/cpp/processing/utils/ObjectDetection.o"
+	@echo "... src/main/cpp/processing/utils/ObjectDetection.i"
+	@echo "... src/main/cpp/processing/utils/ObjectDetection.s"
 	@echo "... src/main/cpp/processing/utils/QuickMaths.o"
 	@echo "... src/main/cpp/processing/utils/QuickMaths.i"
 	@echo "... src/main/cpp/processing/utils/QuickMaths.s"
