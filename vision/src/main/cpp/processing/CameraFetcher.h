@@ -1,8 +1,6 @@
 #pragma once
 #include "./utils/Frame.h"
 
-#define BUFFER_SIZE 3
-
 /**
  * A camera fetcher is a class responsible for keeping a buffer of frames and update the frames in
  * the buffer. thus allowing for the capturing of frames while the processing code is running
@@ -37,25 +35,7 @@ public:
 private:
     cv::VideoCapture * _cap;
     std::thread _thread;
-    Frame _sets[BUFFER_SIZE];
+    Frame _sets[3];
     bool _running;
 };
-
-inline void CameraFetcher::refresh_frame(Frame ** lastFrame){
-    for (auto &_set : _sets) {
-        if(*lastFrame == &_set) {
-            (*lastFrame)->lastFetcher = std::this_thread::get_id();
-            _set.mutex.unlock();
-            break;
-        }
-    }
-    for (auto &_set : _sets) {
-        if(*lastFrame != &_set) {
-            if(_set.mutex.try_lock()){
-                *lastFrame = &_set;
-                break;
-            }
-        }
-    }
-}
 

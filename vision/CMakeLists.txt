@@ -16,10 +16,16 @@ file(GLOB vision_SRC
         "src/main/cpp/**/*.cpp"
         "src/main/cpp/**/*.h"
 
+        "src/main/cpp/processing/utils/QuickMaths.cpp"
+        "src/main/cpp/processing/utils/QuickMaths.h"
+
+        "src/main/cpp/processing/VideoStreamer.cpp"
+        "src/main/cpp/processing/VideoStreamer.h"
+
         "lib/jetsonTX2GPIO/jetsonGPIO.c"
         "lib/jetsonTX2GPIO/jetsonGPIO.h"
         )
 
-add_executable(vision ${vision_SRC})
+add_executable(vision ${vision_SRC} src/main/cpp/processing/VideoStreamer.cpp src/main/cpp/processing/VideoStreamer.h src/main/cpp/processing/utils/ObjectDetection.cpp src/main/cpp/processing/utils/ObjectDetection.h)
 
 target_link_libraries(vision opencv_core opencv_highgui opencv_videoio ${CMAKE_THREAD_LIBS_INIT})

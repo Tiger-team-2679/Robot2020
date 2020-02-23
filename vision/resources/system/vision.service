@@ -1,7 +1,6 @@
 [Unit]
 Description=image processing server service
-BindsTo=dev-video1.device
-After=network-online.target dev-video1.device
+After=network-online.target
 Wants=network-online.target
 StartLimitBurst=10000
 StartLimitInterval=1

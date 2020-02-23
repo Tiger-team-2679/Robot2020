@@ -40,3 +40,21 @@ void CameraFetcher::on_update() {
         _cap->read(frame->mat);
     }
 }
+
+inline void CameraFetcher::refresh_frame(Frame ** lastFrame){
+    for (auto &_set : _sets) {
+        if(*lastFrame == &_set) {
+            (*lastFrame)->lastFetcher = std::this_thread::get_id();
+            _set.mutex.unlock();
+            break;
+        }
+    }
+    for (auto &_set : _sets) {
+        if(*lastFrame != &_set) {
+            if(_set.mutex.try_lock()){
+                *lastFrame = &_set;
+                break;
+            }
+        }
+    }
+}

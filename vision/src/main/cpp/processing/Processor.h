@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include "thread"
 #include "CameraFetcher.h"
+#include "VideoStreamer.h"
 #include "./utils/Command.h"
 #include "../networking/Server.h"
 
@@ -26,7 +27,10 @@ private:
     std::thread _serverThread;
     bool _serverEndSignal = false;
 
+    VideoStreamer stream{"10.26.79.175", 5805};
+
     cv::VideoCapture * _cap;
     CameraFetcher * _cameraFetcher;
-    Frame * _frame;
+    Frame * _inputFrame;
+    Frame * _outputFrame;
 };
