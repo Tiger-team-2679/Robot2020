@@ -45,14 +45,14 @@ double QuickMaths::getDistanceFromPixel(const unsigned int pixelX, const unsigne
     //get angle per pixel
     double distance = (frameHeight / 2) / tan((cameraProperties.camAngleViewY / 2) * PI / 180);
     //double anglePerPixelY = cameraProperties.camAngleViewY / cameraProperties.frameHeight;
-    double pixelAngleFromButtomFrame = atan((cameraProperties.frameHeight - pixelY) / distance); // * anglePerPixelY;
+    double pixelAngleFromButtomFrame = (cameraProperties.camAngle / 2) - atan((cameraProperties.frameHeight - pixelY) / distance); // * anglePerPixelY;
     double angleRobotY = pixelAngleFromButtomFrame + unseenAngle;
     double groundDistance = cameraProperties.height * tan(angleRobotY * PI / 180.0);
     double distanceYAxis = sqrt(pow(cameraProperties.height, 2) + pow(groundDistance, 2));
     //get distance of robot by X axis + Y axis
     //double anglePerPixelX = cameraProperties.camAngleViewX / cameraProperties.frameWidth;
     double distance2 = (frameWidth / 2) / tan((cameraProperties.camAngleViewX / 2) * PI / 180);
-    double angleMiddleFrameX = atan(abs(pixelX - 90) / distance2);
+    double angleMiddleFrameX = atan(abs((pixelX - (cameraProperties.frameWidth / 2))) / distance2) * 180 / PI;
     double distanceFromCam = distanceYAxis / cos(angleMiddleFrameX * PI / 180);
     return sin(angleRobotY * PI / 180) * distanceFromCam;
 }
@@ -62,10 +62,16 @@ double QuickMaths::getAngleFromLine(const unsigned int pixelX1, const unsigned i
     double pixel1Distance = QuickMaths::getDistanceFromPixel(pixelX1, pixelY1, cameraProperties);
     double pixel2Distance = QuickMaths::getDistanceFromPixel(pixelX2, pixelY2, cameraProperties);
     double distance = (cameraProperties.frameWidth / 2) / tan((cameraProperties.camAngleViewX / 2) * PI / 180);
-    double angleFromXEnd1 = atan(abs(pixelX1 - 90) / distance);
-    double angleFromXEnd2 = atan(abs(pixelX2 - 90) / distance);
-    double angleBetweenDistances = angleFromXEnd2 - angleFromXEnd1;
+    double angleFromXEnd1 = atan(abs((pixelX1 - (cameraProperties.frameWidth / 2))) / distance);
+    double angleFromXEnd2 = atan(abs((pixelX2 - (cameraProperties.frameWidth / 2))) / distance);
+    double y1 = pixel1Distance * cos(angleFromXEnd1 * PI / 180);
+    double y2 = pixel2Distance * cos(angleFromXEnd2 * PI / 180);
+    double x1 = pixel1Distance * sin(angleFromXEnd1 * PI / 180);
+    double x2 = pixel2Distance * sin(angleFromXEnd2 * PI / 180);
+    return atan((y2 - y1) / (x2 - x1));
+}
+    /*double angleBetweenDistances = angleFromXEnd2 - angleFromXEnd1;
     double thirdRib = sqrt(pow(pixel1Distance, 2) + pow(pixel2Distance, 2) - 2 * pixel2Distance * pixel1Distance * cos(angleBetweenDistances * PI / 180));
     double secondAngle = sin(angleBetweenDistances * PI / 180) * pixel1Distance / thirdRib ;// out of names
     return 180 - (angleFromXEnd2 + (180 - cameraProperties.camAngleViewX / 2) - secondAngle);
-}
+*/

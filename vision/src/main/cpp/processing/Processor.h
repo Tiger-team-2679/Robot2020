@@ -7,6 +7,9 @@
 #include "VideoStreamer.h"
 #include "./utils/Command.h"
 #include "../networking/Server.h"
+#include "./utils/ObjectDetection.h"
+
+enum dataType{0 = ball};
 
 #define SERVER_PORT 2679
 
@@ -20,14 +23,16 @@ private:
     void updateCommand();
 
     // processing methods
-    int processCargo();
+    std::shared_ptr<std::vector<std::pair<cv::Point<int>, cv::Point<int>>>> processCargo();
+    void sendCargoResults(std::vector<std::pair<cv::Point<int>, cv::Point<int>>>& cargos);
 
     Command _command;
     Server _server{SERVER_PORT};
     std::thread _serverThread;
     bool _serverEndSignal = false;
 
-    VideoStreamer stream{"10.26.79.175", 5805};
+    VideoStreamer
+    {"10.26.79.175", 5805};
 
     cv::VideoCapture * _cap;
     CameraFetcher * _cameraFetcher;

@@ -21,6 +21,21 @@ Processor::~Processor() {
     delete this->_cameraFetcher;
 }
 
+void sendCargoResults(std::vector<std::pair<cv::Point<int>, cv::Point<int>>>& cargos)
+{
+    std::string data = "1 ";
+    int width, height;
+    for(auto& cargo : cargos)
+    {
+        width = (cargo.second).x - (cargo.first).x;
+        height = (cargo.second).y - (cargo.first).y;
+        data += ' ';
+        data = data + std::to_string((cargo.first).x) + " " + std::to_string((cargo.first).y) + " " + width + " " + height + " ";
+    }
+    _server.sendMessage(data);
+}
+
+
 std::string Processor::getGstreamerPipe() {
     return "v4l2src device=/dev/video0 ! video/x-raw, width=(int)640, height=(int)480, format=(string)BGR ! videoconvert ! appsink";
 }
@@ -37,9 +52,9 @@ void Processor::process() {
         if(!(this->_inputFrame->mat.empty() || this->_inputFrame->lastFetcher == std::this_thread::get_id())) {
             if (_command.method == INFINITE_RETURN_METHOD) {
                 if (_command.target == CARGO_TARGET_CODE) {
-                    this->processCargo();
+                    auto contours = this->processCargo();
                 }
-                // TODO send data
+                this->sendCargoResults(contours.get())
             } else if (_command.method == SINGLE_RETURN_METHOD) {
                 if (_command.target == CARGO_TARGET_CODE) {
                     while (!this->processCargo()) {};
