@@ -47,17 +47,22 @@ void Processor::updateCommand() {
 }
 
 void Processor::process() {
+    Results res = nullptr;
     while(true){
         this->_cameraFetcher->refresh_frame(&this->_inputFrame);
         if(!(this->_inputFrame->mat.empty() || this->_inputFrame->lastFetcher == std::this_thread::get_id())) {
             if (_command.method == INFINITE_RETURN_METHOD) {
                 if (_command.target == CARGO_TARGET_CODE) {
-                    auto contours = this->processCargo();
+                    res = this->processCargo();
                 }
+
                 this->sendCargoResults(contours.get())
             } else if (_command.method == SINGLE_RETURN_METHOD) {
                 if (_command.target == CARGO_TARGET_CODE) {
                     while (!this->processCargo()) {};
+                }
+                else if(_command.target == CARGO_TARGET_CODE){
+
                 }
                 this->_command = Command{0, 0};
                 //this->_server.sendMessage("cool and good");
@@ -70,8 +75,8 @@ void Processor::process() {
     }
 }
 
-inline int Processor::processCargo() {
+inline Results Processor::processCargo() {
 
-    return true;
+    return ObjectDetection::colorObjectDetection(_inputFrame);
 }
 

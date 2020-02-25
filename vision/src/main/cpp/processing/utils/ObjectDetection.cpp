@@ -1,3 +1,5 @@
+#include "ObjectDetection.h"
+
 //#include "ObjectDetection.h"
 //
 ///*
@@ -12,7 +14,7 @@
 //    maskFinal=mask
 //    conts,h=cv2.findContours(maskFinal.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)
 //
-std::pair<std::Point<int>, std::Point<int>> getEdgesPoints(std::vector<cv::Point<int>>& contour)
+Result getEdgesPoints(std::vector<cv::Point>& contour)
 {
     int maxX = 0, maxY = 0, minX = 1000, minY = 1000;
     for(auto & point : contour)
@@ -26,51 +28,53 @@ std::pair<std::Point<int>, std::Point<int>> getEdgesPoints(std::vector<cv::Point
         else if(point.y < minY)
             minY = point.y;
     }
-    cv::Point min(minX, minY);
-    cv::Point max(maxX, maxY);
-    return std::make_pair(min, max);
+    Result res = {.values = {minX, minY, maxX, maxY}};
+    return res;
 }
 
-std::shared_ptr<std::vector<std::pair<cv::Point<int>, cv::Point<int>>>>& colorObjectDetection(cv::Mat & frame, unsigned int mode)
+Results colorObjectDetection(cv::Mat & frame, unsigned int mode)
  {
     cv::Mat frameHsv;
     cv::Mat frameThreshold;
     cv::cvtColor(frame,frameHsv,cv::COLOR_BGR2HSV);
+    cv::Scalar ais(1,2,3);
     if(mode = Modes::reflectors)
-        cv::inRange(frameHsv, cv::Scalar(LowerBoundReflectors::H, LowerBoundReflectors::S, LowerBoundReflectors::V), cv::Scalar(UpperBoundReflectors::H, UpperBoundReflectors::S, UpperBoundReflectors::V), frameThreshold);
+        cv::inRange(frameHsv, cv::Scalar((double)LowerBoundReflectors::H, (double)LowerBoundReflectors::S, (double)LowerBoundReflectors::V), cv::Scalar((double)UpperBoundReflectors::H, (double)UpperBoundReflectors::S, (double)UpperBoundReflectors::V), frameThreshold);
     else if(mode = Modes::balls)
-        cv::inRange(frameHsv, cv::Scalar(LowerBoundBalls::H, LowerBoundBalls::S, LowerBoundBalls::V), cv::Scalar(UpperBounBalls::H, UpperBounBalls::S, UpperBounBalls::V), frameThreshold);
-    std::vector<std::vector<Point>> contours;
-    cv::findContours(InputArray frameThreshold, contours, cv::RETR_EXTERNAL, cv::CV_CHAIN_APPROX_NONE, Point offset); //RETR_EXTERNAL = 0,
-    std::vector<std::pair<cv::Point<int>, cv::Point<int>>> newContoursInterface;
+        cv::inRange(frameHsv, cv::Scalar((double)LowerBoundBalls::H, (double)LowerBoundBalls::S, (double)LowerBoundBalls::V), cv::Scalar((double)UpperBoundBalls::H, (double)UpperBoundBalls::S, (double)UpperBoundBalls::V), frameThreshold);
+    std::vector<std::vector<cv::Point>> contours;
+    cv::findContours(frameThreshold, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE); //RETR_EXTERNAL = 0,
+    std::vector<std::pair<cv::Point, cv::Point>> newContoursInterface;
+    Results results;
     for(auto& contour : contours)
     {
-        newContoursInterface.insert(getEdgesPoints(contour));
+        Result res = getEdgesPoints(contour);
+        (results.values).push_back(res);
     }
-    return std::make_shared<std::vector<std::pair<cv::Point<int>, cv::Point<int>>>>(newContoursInterface);
+    return results;
  }
-double distanceBetweenPoints(cv::Point<double> p1, cv::Point<double> p2)
+double distanceBetweenPoints(int x1, int y1, int x2, int y2)
 {
-    double dx = p1.x - p2.x
-    double dy = p1.y - p2.y
-    return sqrt(pow(dx, 2) + pow(dy, 2))
+    double dx = x1 - x2;
+    double dy = y1 - y2;
+    return sqrt(pow(dx, 2) + pow(dy, 2));
 }
 
 
-std::vector<Vec4i> getLines(cv::Mat & frame)
+std::vector<cv::Vec4i> getLines(cv::Mat & frame)
 {
     cv::Mat frameHsv, frameThreshold, frameEdges;
     cvtColor(frame, frameHsv, cv::COLOR_BGR2HSV);
-    cv::inRange(frameHsv, cv::Scalar(LowerRed::H, LowerRed::S, LowerRed::V), cv::Scalar(UpperRed::H, UpperRed::S, UpperRed::V), frameThreshold);
+    cv::inRange(frameHsv, cv::Scalar((double)LowerRed::H, (double)LowerRed::S, (double)LowerRed::V), cv::Scalar((double)UpperRed::H, (double)UpperRed::S, (double)UpperRed::V), frameThreshold);
     cv::Canny(frameThreshold, frameEdges, 50, 200);
-    vector<Vec4i> lines;
-    HoughLinesP(frameEdges, lines, 1, cv::CV_PI / 180, 50, 70, 5 );
+    std::vector<cv::Vec4i> lines;
+    HoughLinesP(frameEdges, lines, 1, CV_PI / 180, 50, 70, 5 );
     return lines;
 }
 
-std::vector<double[3]> detectPointsCloseToCorner(cv::Mat & frame, std::vector<Vec4i>& lines) const
+std::vector<std::array<double, 3>> detectPointsCloseToCorner(cv::Mat & frame, std::vector<cv::Vec4i>& lines)
 {
-    std::vector<double[3]> points; //0 - abs(m1 * m2 + 1), 1 - x, 2 - y
+    std::vector<std::array<double, 3>> points; //0 - abs(m1 * m2 + 1), 1 - x, 2 - y
     for(int i = 0; i < lines.size(); i++ )
     {
         if(lines[i][0] == lines[i][2]) //check if x values are the same
@@ -89,7 +93,7 @@ std::vector<double[3]> detectPointsCloseToCorner(cv::Mat & frame, std::vector<Ve
             double b2 = lineJ[1] - m2 * lineJ[0];
             double x = (b2 - b1) / (m1 - m2);
             double y = m1 * x + b1;
-            double slopeMultiplied = abs(m1 * m2 + 1)
+            double slopeMultiplied = abs(m1 * m2 + 1);
             if(points.size() < 4)
             {
                 points.push_back({slopeMultiplied, x, y});
@@ -98,10 +102,10 @@ std::vector<double[3]> detectPointsCloseToCorner(cv::Mat & frame, std::vector<Ve
             {
                 for(int k = 0; k < points.size(); k++)
                 {
-                    double[3] values = points[k];
-                    if(values[0] > d)
+                    auto values = points[k];
+                    if(values[0] > slopeMultiplied)
                     {
-                        points[k] = {d, x, y};
+                        points.at(k) = {slopeMultiplied, x, y};
                     }
                 }
             }
@@ -110,10 +114,10 @@ std::vector<double[3]> detectPointsCloseToCorner(cv::Mat & frame, std::vector<Ve
     return points;
 }
 
-void detectCorner(cv::Mat & frame)
+Results detectCorner(cv::Mat & frame)
 {
     std::vector<Vec4i>& lines = getLines(frame);
-    std::vector<double[3]> points = detectPointsCloseToCorner(frame, lines);
+    std::vector<std::array<double, 3>> points = detectPointsCloseToCorner(frame, lines);
     int xAvg = 0, yAvg = 0;
     for(auto & point : points)
     {
@@ -122,21 +126,32 @@ void detectCorner(cv::Mat & frame)
     }
     xAvg /= points.size();
     yAvg /= points.size();
-    xs = 0
-    ys = 0
-    index = (0, 0)
-    for i in range(len(linesP)):
-    l = linesP[i][0]
-    for j in range(0, len(l), 2):
-    if dis(l[j], l[j + 1], x_avg, y_avg) < dis(xs, ys, x_avg, y_avg):
-    xs = l[j]
-    ys = l[j + 1]
-    index = (i, j)
-    break
-    i, j = index
-    l = linesP[i][0]
-    if j == 0:
-    cv2.circle(line_on, (int(l[2]), int(l[3])), 5, (0, 255, 255), -1, 8)
-    else:
-    cv2.circle(line_on, (int(l[0]), int(l[1])), 5, (0, 255, 255), -1, 8)
+    int xs = 0, ys = 0;
+    std::Vec4i chosenLine;
+    int chosenPoint = 0;
+    for (auto & currLine : lines) {
+        for (int i = 0; i < 4; i += 2) {
+            if (distanceBetweenPoints(currLine[j], currLine[j + 1], xAvg, yAvg) <
+                distanceBetweenPoints(xs, ys, xAvg, yAvg)) {
+                xs = currLine[j];
+                ys = currLine[j + 1];
+                chosenLine = currLine;
+                chosenPoint = j;
+            }
+        }
+    }
+    Result twoPoints = {.values = {xAvg, yAvg, 0, 0};
+    if(j)
+    {
+        twoPoints.values[2] = chosenLine[2];
+        twoPoints.values[3] = chosenLine[3];
+    }
+    else
+    {
+        twoPoints.values[2] = chosenLine[0];
+        twoPoints.values[3] = chosenLine[1];
+    }
+    Results res;
+    (res.values).push_back(twoPoints);
+    return res;
 }

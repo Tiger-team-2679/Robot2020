@@ -23,8 +23,8 @@ private:
     void updateCommand();
 
     // processing methods
-    std::shared_ptr<std::vector<std::pair<cv::Point<int>, cv::Point<int>>>> processCargo();
-    void sendCargoResults(std::vector<std::pair<cv::Point<int>, cv::Point<int>>>& cargos);
+    Results processCargo();
+    void sendResults(Results& res);
 
     Command _command;
     Server _server{SERVER_PORT};

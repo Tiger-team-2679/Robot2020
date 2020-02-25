@@ -19,6 +19,9 @@ file(GLOB vision_SRC
         "src/main/cpp/processing/utils/QuickMaths.cpp"
         "src/main/cpp/processing/utils/QuickMaths.h"
 
+        "src/main/cpp/processing/utils/ObjectDetection.cpp"
+        "src/main/cpp/processing/utils/ObjectDetection.h"
+
         "src/main/cpp/processing/VideoStreamer.cpp"
         "src/main/cpp/processing/VideoStreamer.h"
 
