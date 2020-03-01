@@ -27,11 +27,20 @@ public class TeleopPowerCells extends CommandBase {
     public void execute() {
         boolean AButton = RobotMap.xbox.getAButton();
         boolean BButton = RobotMap.xbox.getBButton();
-        boolean YButton = RobotMap.xbox.getYButton();
-        powerCells.setCollector(AButton ? - 1 : 0.0);
-        powerCells.setOut(BButton ? 1.0 : 0.0);
-        if (YButton) {
+        double rightTrigger = RobotMap.xbox.getTriggerAxis(GenericHID.Hand.kRight);
+        double leftTrigger = RobotMap.xbox.getTriggerAxis(GenericHID.Hand.kLeft);
+        powerCells.setCollector(AButton ? - 0.7 : 0.0);
+        if (BButton) {
+            powerCells.setCollector(0.7);
+        }
+        if (rightTrigger > 0.2) {
+            powerCells.setOut(+0.8);
+        }
+        else if (leftTrigger > 0.2) {
             powerCells.setOut(-0.8);
+        }
+        else {
+            powerCells.setOut(0);
         }
     }
 

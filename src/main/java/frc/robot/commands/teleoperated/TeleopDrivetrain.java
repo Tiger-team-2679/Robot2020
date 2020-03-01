@@ -27,8 +27,8 @@ public class TeleopDrivetrain extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double xSpeed = RobotMap.joystick.getY();
-        double zRotation = -RobotMap.joystick.getX();
+        double xSpeed = -RobotMap.joystick.getY();
+        double zRotation = RobotMap.joystick.getX();
 
         xSpeed = MathUtil.clamp(xSpeed, -1.0, 1.0);
         xSpeed = applyDeadband(xSpeed, m_deadband);

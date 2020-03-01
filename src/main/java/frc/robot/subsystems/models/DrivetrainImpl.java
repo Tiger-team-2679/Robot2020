@@ -42,8 +42,8 @@ public class DrivetrainImpl extends SubsystemBase implements Drivetrain {
 
     @Override
     public void set(double powerLeft, double powerRight) {
-        frontLeft.set(ControlMode.PercentOutput, - powerLeft);
-        frontRight.set(ControlMode.PercentOutput, powerRight);
+        frontLeft.set(ControlMode.PercentOutput,  powerLeft);
+        frontRight.set(ControlMode.PercentOutput, -powerRight);
     }
 
     @Override

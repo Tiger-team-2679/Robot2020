@@ -7,17 +7,19 @@
 
 package frc.robot;
 
+import edu.wpi.cscore.CvSink;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.automonus.CWColour;
 import frc.robot.commands.automonus.FollowSpline;
 import frc.robot.commands.automonus.FollowSplineV2;
+import frc.robot.commands.automonus.FollowSplineV3;
 import frc.robot.commands.teleoperated.*;
-import frc.robot.subsystems.models.ClimberImpl;
-import frc.robot.subsystems.models.DrivetrainImpl;
-import frc.robot.subsystems.models.ElevatorImpl;
-import frc.robot.subsystems.models.PowerCellsImpl;
+import frc.robot.subsystems.models.*;
 import team2679.core.spline.*;
 
 import java.util.ArrayList;
@@ -40,6 +42,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    CameraServer.getInstance().startAutomaticCapture();
+
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
   }
@@ -78,13 +82,8 @@ public class Robot extends TimedRobot {
 //    // schedule the autonomous command (example)
 //    if (m_autonomousCommand != null) {
 //      m_autonomousCommand.schedule();
-//    }
-
-    List<Point> points = new LinkedList<>();
-    points.add(new Point(0, 0));
-    points.add(new Point(0, 1));
-    ExtendedSpline spline = new ExtendedSplineAdapter(new BSpline(points));
-    Command auto = new FollowSplineV2(RobotMap.drivetrain, spline);
+//
+    Command auto = new SimpleAuto();
     CommandScheduler.getInstance().schedule(auto);
   }
 
@@ -115,6 +114,20 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    switch (DriverStation.getInstance().getGameSpecificMessage()) {
+      case "B":
+        SmartDashboard.putString("Color", "Blue");
+        break;
+      case "R":
+        SmartDashboard.putString("Color", "Red");
+        break;
+      case "G":
+        SmartDashboard.putString("Color", "Green");
+        break;
+      case "Y":
+        SmartDashboard.putString("Color", "Yellow");
+        break;
+    }
   }
 
   @Override
