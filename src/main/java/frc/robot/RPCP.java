@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Scanner;
 
 /**
  * RPCP - Raspberry - Pi Communication Protocol.
@@ -18,12 +19,12 @@ public class RPCP {
 
     public static final char REFLECTOR_DATA_REQUEST = 'R';
 
-    public static final String IP = "10.10.2.8";
+    public static final String IP = "127.0.0.1";
     public static final int PORT = 8089;
 
     private Socket socket;
     private DataInputStream in;
-    private DataOutputStream out;
+    private PrintWriter out;
     private String buffer;
 
     /**
@@ -34,7 +35,7 @@ public class RPCP {
             try {
                 this.socket = new Socket(IP, PORT);
                 this.in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-                this.out = new DataOutputStream(socket.getOutputStream());
+                this.out = new PrintWriter(socket.getOutputStream(), true);
                 break;
             } catch (IOException e) {}
         }
@@ -54,20 +55,18 @@ public class RPCP {
             } catch (IOException e) {}
         }
         buffer = buffer.substring(1, buffer.length() - 1);
+        System.out.println("Connected...");
     }
 
     public void request(char requestType) {
-        try {
-            out.writeChar(requestType);
-            out.flush();
-        } catch (IOException e) {
-            System.out.println("Connection Problem... Sending request again");
-            request(requestType);
-        }
+        out.print(requestType);
+        out.flush();
     }
 
     public int[] requestAndReceive(char requestType) {
+        System.out.println("Requesting...");
         request(requestType);
+        System.out.println("Wait for message...");
         readMessage();
         return getRect();
     }
@@ -88,6 +87,16 @@ public class RPCP {
         } catch (IOException e) {
             System.out.println("Connection Problem when trying to close socket...");
             close();
+        }
+    }
+
+    public static void main(String[] args) {
+        RPCP rp = new RPCP();
+        Scanner sc = new Scanner(System.in);
+        while (true) {
+            sc.nextLine();
+            int[] rect = rp.requestAndReceive(RPCP.REFLECTOR_DATA_REQUEST);
+            System.out.println(Arrays.toString(rect));
         }
     }
 }
