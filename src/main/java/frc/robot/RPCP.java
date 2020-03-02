@@ -1,11 +1,9 @@
 package frc.robot;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.LinkedList;
 
 /**
  * RPCP - Raspberry - Pi Communication Protocol.
@@ -18,6 +16,8 @@ import java.util.LinkedList;
  */
 public class RPCP {
 
+    public static final char REFLECTOR_DATA_REQUEST = 'R';
+
     public static final String IP = "10.10.2.8";
     public static final int PORT = 8089;
 
@@ -25,12 +25,9 @@ public class RPCP {
     private DataInputStream in;
     private DataOutputStream out;
     private String buffer;
-    private boolean stopWaiting = false;
-    private boolean retransmit = true;
 
     /**
-     * Creates socket communication with the Jetson
-     * @throws IOException Throws exception when
+     * Creates socket communication with the Raspberry-Pi
      */
     public RPCP() {
         while(true) {
@@ -45,8 +42,7 @@ public class RPCP {
     }
 
     /**
-     * Reads a message from the Jetson.
-     * @return True if read successfully, false otherwise.
+     * Reads a message from the Raspberry-Pi.
      */
     private void readMessage() {
         buffer = "";
@@ -60,34 +56,19 @@ public class RPCP {
         buffer = buffer.substring(1, buffer.length() - 1);
     }
 
-    public void request() {
+    public void request(char requestType) {
         try {
-            out.writeUTF("r");
+            out.writeChar(requestType);
             out.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Connection Problem... Sending request again");
+            request(requestType);
         }
     }
 
-    public int[] requestAndReceive() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(!stopWaiting) {
-                    try {
-                        Thread.sleep(5000);
-                        retransmit = !retransmit;
-                        if (retransmit)
-                            request();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-        request();
+    public int[] requestAndReceive(char requestType) {
+        request(requestType);
         readMessage();
-        stopWaiting = true;
         return getRect();
     }
 
@@ -105,13 +86,8 @@ public class RPCP {
             in.close();
             out.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Connection Problem when trying to close socket...");
+            close();
         }
-    }
-
-    public static void main(String[] args) throws IOException {
-        RPCP connect = new RPCP();
-        System.out.println(Arrays.toString(connect.requestAndReceive()));
-        connect.close();
     }
 }
