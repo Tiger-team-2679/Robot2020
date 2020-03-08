@@ -6,11 +6,12 @@ StartLimitBurst=10000
 StartLimitInterval=1
 
 [Service]
+User=pi
 Type=simple
 Restart=always
 RestartSec=3
-ExecStart=/home/vision/processing/build/vision
-WorkingDirectory=/home/vision/processing/build
+ExecStart=python3 -u /home/pi/processing/src/main.py
+WorkingDirectory=/usr/bin
 
 [Install]
 WantedBy=multi-user.target
